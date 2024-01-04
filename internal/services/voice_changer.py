@@ -16,7 +16,8 @@ _model_dir = f"{_dirname}/resources/logs/44k"
 _models = {
     'biden': {'model_file': "G_20000.pth"},
     'trump': {'model_file': "G_68800.pth"},
-    'obama': {'model_file': "G_50000.pth"}
+    'obama': {'model_file': "G_50000.pth"},
+    'nguyen_ngoc_ngan': {'model_file': "G_1001.pth"}
 }
 
 
