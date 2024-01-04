@@ -1,0 +1,20 @@
+@startuml
+
+person "User" as user
+
+node "API Gateway" as gw
+queue "Task Queue" as tqueue
+collections "AI Server" as ai
+node "SocketIO Server" as socket
+
+database " MinIO Server" as minio
+database " Database Server" as db
+
+user --> gw: Create / Retrieve tasks
+gw -> minio: Upload / Retrieve audio
+gw --> tqueue: Send task to queue
+tqueue <- ai: Pull & Process tasks
+ai -u-> minio: Upload / Retrieve audio
+tqueue <--> db: Persist / Query tasks
+
+@enduml
