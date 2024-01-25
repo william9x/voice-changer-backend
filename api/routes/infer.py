@@ -22,6 +22,7 @@ class InferReq(BaseModel):
 @router.post('/', response_class=JSONResponse)
 async def infer(req: InferReq) -> JSONResponse:
     try:
+        log.info(f"Infer request: {req}")
         voice_changer.infer(req.input_path, req.output_path, req.model_path, req.config_path, req.transpose)
     except:
         return JSONResponse(status_code=500, content={"message": "Internal Server Error"})
