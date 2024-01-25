@@ -17,17 +17,6 @@ pip install pyworld
 pip install -r requirements.txt
 EOF
 
-RUN <<EOF
-cd internal/resources
-mkdir logs
-mkdir results
-mkdir uploads
-
-cd logs
-pip install gdown
-gdown --folder https://drive.google.com/drive/folders/1KzRjCVyNHPqe7fIE2gUt5CysGdwMbLbi?usp=sharing
-EOF
-
 EXPOSE 8080
 
-ENTRYPOINT uvicorn main:app --port 8080
+ENTRYPOINT uvicorn main:app --port 8080 --host 0.0.0.0
