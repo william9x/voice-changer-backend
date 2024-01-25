@@ -1,4 +1,2 @@
-title = 'Voice Changer AI'
-desc = 'Voice Changer AI'
-
-endpoint_paths = {'health': '/health'}
+title = 'Voice Changer So-vits-vc Adapter'
+desc = 'Voice Changer So-vits-vc Adapter'

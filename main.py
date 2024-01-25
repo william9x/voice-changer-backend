@@ -5,13 +5,15 @@ from starlette.middleware.cors import CORSMiddleware
 
 import docs
 import events
-from api_v1.router import router as api_v1_router
+from api.router import api as api_router
+from api.router import api_v1 as api_v1_router
 
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title=docs.title, description=docs.desc)
 
 # include router
+app.include_router(api_router)
 app.include_router(api_v1_router)
 
 # add middleware
