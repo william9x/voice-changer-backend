@@ -17,6 +17,6 @@ pip install pyworld
 pip install -r requirements.txt
 EOF
 
-EXPOSE 8080
+EXPOSE 8085
 
-ENTRYPOINT uvicorn main:app --port 8080 --host 0.0.0.0
+ENTRYPOINT uvicorn main:app --port 8085 --host 0.0.0.0
