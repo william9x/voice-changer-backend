@@ -1,7 +1,7 @@
 import logging
 
+import uvicorn
 from fastapi import FastAPI, HTTPException
-from starlette.middleware.cors import CORSMiddleware
 
 import docs
 import events
@@ -17,12 +17,21 @@ app.include_router(api_router)
 app.include_router(api_v1_router)
 
 # add middleware
-logger.info('Adding middlewares..')
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["*"],
-)
+# add exception handler
 app.add_exception_handler(HTTPException, events.on_http_error)
+
+
+def main():
+    config = uvicorn.Config(
+        "main:app",
+        host="0.0.0.0",
+        port=8082,
+        log_level="debug",
+        workers=10,
+    )
+    server = uvicorn.Server(config)
+    server.run()
+
+
+if __name__ == "__main__":
+    main()
