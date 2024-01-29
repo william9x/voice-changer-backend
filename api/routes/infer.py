@@ -24,6 +24,7 @@ async def infer(req: InferReq) -> JSONResponse:
     try:
         log.info(f"Infer request: {req}")
         voice_changer.infer(req.input_path, req.output_path, req.model_path, req.config_path, req.transpose)
-    except:
+    except Exception as e:
+        log.error(e)
         return JSONResponse(status_code=500, content={"message": "Internal Server Error"})
     return JSONResponse(status_code=201, content={"message": "Created"})

@@ -25,7 +25,7 @@ def main():
     config = uvicorn.Config(
         "main:app",
         host="0.0.0.0",
-        port=8082,
+        port=8080,
         log_level="debug",
         workers=10,
     )
