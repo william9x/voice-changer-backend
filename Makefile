@@ -3,5 +3,4 @@ install:
 
 	python -m venv .venv && \
 	source .venv/bin/activate && \
-	pip install pyworld && \
 	pip install -r requirements.txt

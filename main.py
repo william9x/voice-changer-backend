@@ -42,13 +42,12 @@ async def svc_infer(req: InferReq) -> JSONResponse:
 
 
 class RvcInferReq(BaseModel):
-    modelpath: str
+    model_path: str
+    index_file: Path | None = None
     input: Path
     sid: int = 0
     transpose: int = 0
     f0_method: str = "rmvpe"
-    f0_file: Path | None = None
-    index_file: Path | None = None
     index_rate: float = 0.75
     filter_radius: int = 3
     resample_sr: int = 0
@@ -59,19 +58,19 @@ class RvcInferReq(BaseModel):
 @app.post("/api/v1/rvc/infer", tags=["Infer"], response_class=StreamingResponse)
 async def rvc_infer(req: RvcInferReq) -> StreamingResponse:
     vc = VC()
-    vc.get_vc(req.modelpath)
+    vc.get_vc(req.model_path)
     tgt_sr, audio_opt, times, _ = vc.vc_single(
-        req.sid,
-        req.input,
-        req.transpose,
-        req.f0_method,
-        req.f0_file,
-        req.index_file,
-        req.index_rate,
-        req.filter_radius,
-        req.resample_sr,
-        req.rms_mix_rate,
-        req.protect,
+        sid=req.sid,
+        input_audio_path=req.input,
+        f0_up_key=req.transpose,
+        f0_method=req.f0_method,
+        f0_file=None,
+        index_file=req.index_file,
+        index_rate=req.index_rate,
+        filter_radius=req.filter_radius,
+        resample_sr=req.resample_sr,
+        rms_mix_rate=req.rms_mix_rate,
+        protect=req.protect,
     )
     wavfile.write(wv := BytesIO(), tgt_sr, audio_opt)
     print(times)
