@@ -1,7 +1,5 @@
 install:
-	apt update && sudo apt upgrade && \
-	apt-get install -y build-essential autoconf libtool pkg-config && \
-	apt-get install -y python3-pip python3.10-venv python-is-python3 && \
+	sudo apt update && sudo apt install screen lsof nano ffmpeg && \
 
 	python -m venv .venv && \
 	source .venv/bin/activate && \

@@ -1,0 +1,36 @@
+@startuml
+
+actor User
+
+collections     "Public API Server"        as API
+database        MinIO               as MinIO
+queue           Redis               as Redis
+
+|||
+User -> API++: \tRequest to infer
+    activate User
+    API -> Redis++: Create inference task
+        Redis -> Redis: Enqueue task
+    return Success
+return \tTask info
+|||
+
+loop until task status is completed or archived
+|||
+    User -> API++: Get task info by TaskID
+    return Task info
+    |||
+
+    alt status is completed
+        |||
+        User -> MinIO++: \tDownload file
+        return \tFile
+        |||
+    end
+|||
+deactivate User
+end
+
+
+
+@enduml

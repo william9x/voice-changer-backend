@@ -1,0 +1,35 @@
+@startuml
+
+actor User
+
+collections     "Public API Server"        as API
+database        MinIO               as MinIO
+queue           Redis               as Redis
+
+|||
+User -> API++: Request to change voice
+    activate User
+    API -> MinIO++: Upload audio file
+    return Success
+    |||
+    |||
+    API -> Redis++: Create process audio task
+        Redis -> Redis: Enqueue task
+    return Success
+return Task ID
+|||
+
+loop until task status is completed or failed
+|||
+    User -> API++: Get task info by TaskID
+    return Task info
+    |||
+    User -> MinIO++: Download audio file
+    return Audio file
+|||
+deactivate User
+end
+
+
+
+@enduml

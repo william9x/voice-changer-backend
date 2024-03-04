@@ -1,0 +1,32 @@
+@startuml
+
+collections     "AI Server"         as AI
+queue           Redis               as Redis
+database        MinIO               as MinIO
+
+|||
+loop
+    AI -> Redis++: Get task
+    activate AI
+        |||
+        Redis -> Redis: Dequeue task
+        |||
+        return Task payload
+        |||
+        AI -> MinIO++: Download raw audio file
+        |||
+        return Audio file
+        |||
+        AI -> AI: Process audio
+        |||
+        AI -> MinIO++: Upload processed audio file
+        return Success
+        |||
+        AI -> Redis++: Update task status
+        return Success
+        deactivate AI
+        |||
+end
+|||
+
+@enduml
