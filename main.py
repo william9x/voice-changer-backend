@@ -3,10 +3,9 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from pydantic import BaseModel
+from rvc.modules.vc.modules import VC
 from scipy.io import wavfile
 from starlette.responses import JSONResponse
-
-from rvc_adapter import VC
 
 logger = logging.getLogger(__name__)
 
