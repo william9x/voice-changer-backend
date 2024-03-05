@@ -16,8 +16,8 @@ app = FastAPI()
 
 class RvcInferReq(BaseModel):
     model_path: str
-    index_file: Path | None = None
-    input: Path
+    index_path: Path | None = None
+    input_path: Path
     sid: int = 0
     transpose: int = 0
     f0_method: str = "rmvpe"
@@ -34,11 +34,11 @@ async def rvc_infer(req: RvcInferReq) -> StreamingResponse:
     vc.get_vc(req.model_path)
     tgt_sr, audio_opt, times, _ = vc.vc_single(
         sid=req.sid,
-        input_audio_path=req.input,
+        input_audio_path=req.input_path,
         f0_up_key=req.transpose,
         f0_method=req.f0_method,
         f0_file=None,
-        index_file=req.index_file,
+        index_file=req.index_path,
         index_rate=req.index_rate,
         filter_radius=req.filter_radius,
         resample_sr=req.resample_sr,
