@@ -1,16 +1,12 @@
 import logging
-import os
 import traceback
 from collections import OrderedDict
-from io import BytesIO
 from pathlib import Path
 
 import numpy as np
-import soundfile as sf
 import torch
-
 from rvc.configs.config import Config
-from rvc.lib.audio import load_audio, wav2
+from rvc.lib.audio import load_audio
 from rvc.lib.infer_pack.models import (
     SynthesizerTrnMs256NSFsid,
     SynthesizerTrnMs256NSFsid_nono,
@@ -85,19 +81,19 @@ class VC:
         return self.n_spk, return_protect
 
     def vc_single(
-        self,
-        sid: int,
-        input_audio_path: Path,
-        f0_up_key: int = 0,
-        f0_method: str = "rmvpe",
-        f0_file: Path | None = None,
-        index_file: Path | None = None,
-        index_rate: float = 0.75,
-        filter_radius: int = 3,
-        resample_sr: int = 0,
-        rms_mix_rate: float = 0.25,
-        protect: float = 0.33,
-        hubert_path: str | None = None,
+            self,
+            sid: int,
+            input_audio_path: Path,
+            f0_up_key: int = 0,
+            f0_method: str = "rmvpe",
+            f0_file: Path | None = None,
+            index_file: Path | None = None,
+            index_rate: float = 0.75,
+            filter_radius: int = 3,
+            resample_sr: int = 0,
+            rms_mix_rate: float = 0.25,
+            protect: float = 0.33,
+            hubert_path: str | None = None,
     ):
         hubert_path = os.getenv("hubert_path") if not hubert_path else hubert_path
 
@@ -140,64 +136,3 @@ class VC:
             info = traceback.format_exc()
             logger.warning(info)
             return None, None, None, info
-
-    def vc_multi(
-        self,
-        sid: int,
-        paths: list,
-        opt_root: Path,
-        f0_up_key: int = 0,
-        f0_method: str = "rmvpe",
-        f0_file: Path | None = None,
-        index_file: Path | None = None,
-        index_rate: float = 0.75,
-        filter_radius: int = 3,
-        resample_sr: int = 0,
-        rms_mix_rate: float = 0.25,
-        protect: float = 0.33,
-        output_format: str = "wav",
-        hubert_path: str | None = None,
-    ):
-        try:
-            os.makedirs(opt_root, exist_ok=True)
-            paths = [path.name for path in paths]
-            infos = []
-            for path in paths:
-                tgt_sr, audio_opt, _, info = self.vc_single(
-                    sid,
-                    Path(path),
-                    f0_up_key,
-                    f0_method,
-                    f0_file,
-                    index_file,
-                    index_rate,
-                    filter_radius,
-                    resample_sr,
-                    rms_mix_rate,
-                    protect,
-                    hubert_path,
-                )
-                if info:
-                    try:
-                        if output_format in ["wav", "flac"]:
-                            sf.write(
-                                f"{opt_root}/{os.path.basename(path)}.{output_format}",
-                                audio_opt,
-                                tgt_sr,
-                            )
-                        else:
-                            with BytesIO() as wavf:
-                                sf.write(wavf, audio_opt, tgt_sr, format="wav")
-                                wavf.seek(0, 0)
-                                with open(
-                                    f"{opt_root}/{os.path.basename(path)}.{output_format}",
-                                    "wb",
-                                ) as outf:
-                                    wav2(wavf, outf, output_format)
-                    except Exception:
-                        info += traceback.format_exc()
-                infos.append(f"{os.path.basename(path)}->{info}")
-                yield "\n".join(infos)
-            yield "\n".join(infos)
-        except:
-            yield traceback.format_exc()

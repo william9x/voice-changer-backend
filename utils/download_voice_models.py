@@ -25,7 +25,7 @@ if __name__ == "__main__":
     ]
     for model in model_paths:
         print(f"Downloading {model}...")
-        rvc_models_dir = BASE_DIR / "assets/weights/rvc" / model
+        rvc_models_dir = BASE_DIR / "assets/weights/custom_rvc" / model
         dl_model(RVC_DOWNLOAD_LINK + model, "G.pth", rvc_models_dir)
         dl_model(RVC_DOWNLOAD_LINK + model, "model.index", rvc_models_dir)
 
