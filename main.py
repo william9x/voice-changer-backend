@@ -30,6 +30,7 @@ class RvcInferReq(BaseModel):
 
 @app.post("/api/v1/rvc/infer", tags=["Infer"], response_class=StreamingResponse)
 async def rvc_infer(req: RvcInferReq) -> StreamingResponse:
+    print(f"received request: {req}")
     vc = VC()
     vc.get_vc(req.model_path)
     tgt_sr, audio_opt, times, _ = vc.vc_single(
