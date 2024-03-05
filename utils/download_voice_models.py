@@ -20,14 +20,11 @@ def dl_model(link, dir_name, output_file):
 if __name__ == "__main__":
     rvc_models_dir = BASE_DIR / "assets/weights/"
     model_paths = [
-        "obama",
-        "jung_kook",
-        "charlie_puth",
-        "doja_cat",
-        "justin_bieber",
-        "biden",
-        "wrld_juice",
-        "patrick_star",
+        "katy_perry",
+        "jay_z",
+        "dua_lipa",
+        "bts_jimin",
+        "homer_simpson",
     ]
     for model in model_paths:
         print(f"Downloading {model}...")
