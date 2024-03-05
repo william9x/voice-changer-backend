@@ -1,13 +1,12 @@
 import logging
-from io import BytesIO
 from pathlib import Path
 
 from fastapi import FastAPI
-from fastapi import responses
 from pydantic import BaseModel
-from rvc.modules.vc.modules import VC
 from scipy.io import wavfile
-from starlette.responses import StreamingResponse
+from starlette.responses import JSONResponse
+
+from rvc.modules.vc.modules import VC
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +17,7 @@ class RvcInferReq(BaseModel):
     model_path: str
     index_path: Path | None = None
     input_path: Path
+    output_path: Path
     sid: int = 0
     transpose: int = 0
     f0_method: str = "rmvpe"
@@ -28,8 +28,8 @@ class RvcInferReq(BaseModel):
     protect: float = 0.33
 
 
-@app.post("/api/v1/rvc/infer", tags=["Infer"], response_class=StreamingResponse)
-async def rvc_infer(req: RvcInferReq) -> StreamingResponse:
+@app.post("/api/v1/rvc/infer", tags=["Infer"], response_class=JSONResponse)
+async def rvc_infer(req: RvcInferReq) -> JSONResponse:
     print(f"received request: {req}")
     vc = VC()
     vc.get_vc(req.model_path)
@@ -46,13 +46,8 @@ async def rvc_infer(req: RvcInferReq) -> StreamingResponse:
         rms_mix_rate=req.rms_mix_rate,
         protect=req.protect,
     )
-    wavfile.write(wv := BytesIO(), tgt_sr, audio_opt)
-    print(times)
-    return responses.StreamingResponse(
-        wv,
-        media_type="audio/wav",
-        headers={"Content-Disposition": "attachment; filename=inference.wav"},
-    )
+    wavfile.write(req.output_path, tgt_sr, audio_opt)
+    return JSONResponse(content={"message": "Created"}, status_code=201)
 
 
 if __name__ == "__main__":
