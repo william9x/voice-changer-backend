@@ -1,4 +1,5 @@
 import logging
+from multiprocessing import Manager
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -9,7 +10,11 @@ from starlette.responses import JSONResponse
 from voice_model_factory import VoiceModelFactory
 
 logger = logging.getLogger(__name__)
-factory = VoiceModelFactory()
+
+manager = Manager()
+store = manager.dict()
+store["factory"] = VoiceModelFactory()
+
 app = FastAPI()
 
 
@@ -31,7 +36,7 @@ class RvcInferReq(BaseModel):
 @app.post("/api/v1/rvc/infer", tags=["Infer"], response_class=JSONResponse)
 async def rvc_infer(req: RvcInferReq) -> JSONResponse:
     print(f"received request: {req}")
-    vc = factory.get_model(req.model_path)
+    vc = store["factory"].get_model(req.model_path)
     if vc is None:
         return JSONResponse(content={"message": f"Model {req.model_path} not exist"}, status_code=400)
 
