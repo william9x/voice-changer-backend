@@ -37,8 +37,6 @@ async def rvc_infer(req: RvcInferReq) -> JSONResponse:
     if vc is None:
         return JSONResponse(content={"message": f"Model {req.model_path} not exist"}, status_code=400)
 
-    print("Found VC")
-    print(vc)
     tgt_sr, audio_opt, times, _ = vc.vc_single(
         sid=req.sid,
         input_audio_path=req.input_path,

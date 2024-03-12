@@ -64,7 +64,8 @@ class VoiceModelFactory:
     def init_models(self, model_path):
         print(f"Loading model ${model_path}")
         vc = VC()
-        self._models[model_path] = vc.get_vc(model_path)
+        vc.get_vc(model_path)
+        self._models[model_path] = vc
 
     def get_model(self, model_path):
         print(f"Model selected: {model_path}")
