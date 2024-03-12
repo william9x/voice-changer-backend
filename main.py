@@ -10,6 +10,7 @@ from starlette.responses import JSONResponse
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+vc = VC()
 
 
 class RvcInferReq(BaseModel):
@@ -30,7 +31,6 @@ class RvcInferReq(BaseModel):
 @app.post("/api/v1/rvc/infer", tags=["Infer"], response_class=JSONResponse)
 async def rvc_infer(req: RvcInferReq) -> JSONResponse:
     print(f"received request: {req}")
-    vc = VC()
     vc.get_vc(req.model_path)
     tgt_sr, audio_opt, times, _ = vc.vc_single(
         sid=req.sid,
@@ -52,4 +52,4 @@ async def rvc_infer(req: RvcInferReq) -> JSONResponse:
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    uvicorn.run(app, host="0.0.0.0", port=8080, loop="asyncio", workers=15)
