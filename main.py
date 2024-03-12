@@ -3,14 +3,15 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from pydantic import BaseModel
-from rvc.modules.vc.modules import VC
 from scipy.io import wavfile
 from starlette.responses import JSONResponse
+
+from voice_model_factory import VoiceModelFactory
 
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
-vc = VC()
+factory = VoiceModelFactory()
 
 
 class RvcInferReq(BaseModel):
@@ -31,7 +32,10 @@ class RvcInferReq(BaseModel):
 @app.post("/api/v1/rvc/infer", tags=["Infer"], response_class=JSONResponse)
 async def rvc_infer(req: RvcInferReq) -> JSONResponse:
     print(f"received request: {req}")
-    vc.get_vc(req.model_path)
+    vc = factory.get_model(req.model_path)
+    if vc is None:
+        return JSONResponse(content={"message": f"Model {req.model_path} not exist"}, status_code=400)
+
     tgt_sr, audio_opt, times, _ = vc.vc_single(
         sid=req.sid,
         input_audio_path=req.input_path,
