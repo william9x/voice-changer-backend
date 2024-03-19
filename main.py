@@ -13,9 +13,9 @@ app = FastAPI()
 
 class RvcInferReq(BaseModel):
     model_path: str
-    index_path: Path | None = None
-    input_path: Path
-    output_path: Path
+    index_path: str
+    input_path: str
+    output_path: str
     sid: int = 0
     transpose: int = 0
     f0_method: str = "rmvpe"
@@ -34,13 +34,16 @@ async def rvc_infer(req: RvcInferReq) -> JSONResponse:
     if vc is None:
         return JSONResponse(content={"message": f"Model {req.model_path} not exist"}, status_code=400)
 
+    _input_path = Path(req.input_path)
+    print(f"input {_input_path.absolute()}")
+
     tgt_sr, audio_opt, times, _ = vc.vc_single(
         sid=req.sid,
-        input_audio_path=req.input_path,
+        input_audio_path=Path(req.input_path),
         f0_up_key=req.transpose,
         f0_method=req.f0_method,
         f0_file=None,
-        index_file=req.index_path,
+        index_file=Path(req.index_path),
         index_rate=req.index_rate,
         filter_radius=req.filter_radius,
         resample_sr=req.resample_sr,
